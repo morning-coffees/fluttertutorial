@@ -1,14 +1,23 @@
-import 'package:fluttertutorial/widgets/chat_bubble.dart';
 import 'package:flutter/material.dart';
 
-class MessagePage extends StatelessWidget {
+class MessagePage extends StatefulWidget {
   const MessagePage({Key? key}) : super(key: key);
+
+  @override
+  State<MessagePage> createState() => _MessagePageState();
+}
+
+class _MessagePageState extends State<MessagePage> {
+  bool isTypeMessageFocused = false;
 
   @override
   Widget build(BuildContext context) {
     Widget chatInput() {
-      return Container(
-        width: MediaQuery.of(context).size.width / 2,
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        width: isTypeMessageFocused
+            ? MediaQuery.of(context).size.width - 30
+            : MediaQuery.of(context).size.width / 2,
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
         decoration: BoxDecoration(
           color: const Color(0xffFFFFFF),
@@ -18,10 +27,17 @@ class MessagePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              child: TextFormField(
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Message',
+              child: Focus(
+                onFocusChange: (focus) {
+                  setState(() {
+                    isTypeMessageFocused = focus;
+                  });
+                },
+                child: TextFormField(
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Message',
+                  ),
                 ),
               ),
             ),
