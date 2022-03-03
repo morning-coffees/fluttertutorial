@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertutorial/pages/message_page.dart';
 
 void main() => runApp(const MyApp());
 
@@ -12,7 +13,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Poppins',
       ),
-      home: const Text('Hello, this is ugly site'),
+      home: const MessagePage(),
     );
   }
 }
