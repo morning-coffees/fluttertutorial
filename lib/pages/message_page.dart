@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertutorial/models/message_model.dart';
 import 'package:fluttertutorial/widgets/chat_bubble.dart';
 import 'package:fluttertutorial/widgets/chat_bubble_me.dart';
+import 'package:intl/intl.dart';
 
 class MessagePage extends StatefulWidget {
   const MessagePage({Key? key}) : super(key: key);
@@ -10,7 +12,10 @@ class MessagePage extends StatefulWidget {
 }
 
 class _MessagePageState extends State<MessagePage> {
+  List<MessageModel> messages = [];
   bool isTypeMessageFocused = false;
+  TextEditingController messageController = TextEditingController();
+  int counterMessages = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +41,7 @@ class _MessagePageState extends State<MessagePage> {
                   });
                 },
                 child: TextFormField(
+                  controller: messageController,
                   decoration: const InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Message',
@@ -43,7 +49,20 @@ class _MessagePageState extends State<MessagePage> {
                 ),
               ),
             ),
-            const Icon(Icons.send)
+            GestureDetector(
+                onTap: () {
+                  MessageModel md = MessageModel(
+                      'assets/images/1.png',
+                      messageController.text,
+                      DateFormat.jm().format(DateTime.now()),
+                      messages.length % 2 == 0 ? 'me' : 'not me');
+                  messages.add(md);
+                  messageController.clear();
+                  const snackBar = SnackBar(content: Text('Message sent!'));
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  setState(() {});
+                },
+                child: const Icon(Icons.send)),
           ],
         ),
       );
@@ -77,10 +96,10 @@ class _MessagePageState extends State<MessagePage> {
                     Column(
                       children: const [
                         Text(
-                          'Moba Analog',
+                          'Group chat',
                         ),
                         Text(
-                          '14,209 members',
+                          '10 members',
                         )
                       ],
                     ),
@@ -93,22 +112,18 @@ class _MessagePageState extends State<MessagePage> {
                 ),
               ),
             ),
-            const ChatBubble(
-                imageUrl: 'assets/images/1.png',
-                text: 'How are you guys? ',
-                time: '2:30'),
-            const ChatBubble(
-                imageUrl: 'assets/images/1.png',
-                text: 'Find here :P',
-                time: '3:11'),
-            const ChatBubbleMe(
-                imageUrl: 'assets/images/1.png',
-                text: 'Thinking about how people .. hmmmmm',
-                time: '3:15'),
-            const ChatBubble(
-                imageUrl: 'assets/images/1.png',
-                text: 'Love them',
-                time: '23:11'),
+            ...<Widget>[
+              for (MessageModel message in messages)
+                (message.from == 'me')
+                    ? ChatBubbleMe(
+                        imageUrl: message.imageUrl,
+                        text: message.text,
+                        time: message.time)
+                    : ChatBubble(
+                        imageUrl: message.imageUrl,
+                        text: message.text,
+                        time: message.time),
+            ],
           ],
         ),
       ),
